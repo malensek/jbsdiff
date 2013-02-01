@@ -1,0 +1,121 @@
+<?xml version="1.0" standalone="yes"?>
+
+<project name="jbsdiff" basedir="." default="jar">
+    <description>
+        Ant buildfile for the ${ant.project.name} distribution
+    </description>
+
+    <!-- Build properties -->
+    <property name="project.version" value="0.1" />
+    <property name="project.url" value="http://matthew.malensek.net/projects/jbsdiff" />
+    <tstamp>
+        <format property="build.date" pattern="yyyy-MM-dd" />
+    </tstamp>
+
+    <!-- Directories -->
+    <property name="src" value="src" />
+    <property name="build" value="classes" />
+    <property name="dist" value="lib" />
+    <property name="docs" value="docs/api" />
+
+    <!-- javadoc properties -->
+    <property name="header" value="The ${ant.project.name} Project" />
+    <property name="Release" value="Release-[${project.version}] " />
+    <property name="windowtitle"
+        value="${ant.project.name} Documentation - ${Release}" />
+    <property name="doctitle"
+        value="Package List for the ${ant.project.name} Project
+               &lt;br&gt;${Release} ${build.date}" />
+
+    <path id="classpath">
+        <fileset dir="." includes="lib/*.jar" />
+    </path>
+
+    <!-- Pre-build Preparation -->
+    <target name="prepare">
+        <!-- Create the time stamp -->
+        <tstamp />
+        <!-- Create the build directory structure used by compile -->
+        <mkdir dir="${build}" />
+    </target>
+
+    <!-- Compile Java source files -->
+    <target name="compile" depends="prepare" description="Compile Java sources">
+        <javac destdir="${build}" debug="on" fork="true"
+               memoryMaximumSize="128m" includeantruntime="false">
+            <src path="${src}" />
+            <classpath refid="classpath" />
+        </javac>
+        <copy todir="classes">
+            <fileset dir="${src}">
+                <include name="**/*.xsb" />
+                <include name="**/*.class" />
+                <include name="**/bgm.ser" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="jar" depends="compile">
+        <!-- Create the ${dist}/lib directory -->
+        <mkdir dir="${dist}" />
+        <jar basedir="${build}" jarfile="${dist}/${ant.project.name}.jar">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Specification-Title"
+                           value="${ant.project.name}" />
+                <attribute name="Specification-Version"
+                           value="${project.version}" />
+                <attribute name="Specification-URL" value="${project.url}" />
+                <attribute name="Implementation-Version"
+                           value="${project.version}---${build.date}" />
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="javadoc" description="Generates javadoc" depends="compile">
+        <echo message="Generating javadoc for ${ant.project.name}..." />
+        <mkdir dir="${docs}" />
+        <javadoc sourcepath="${src}" destdir="${docs}" useexternalfile="yes"
+                 maxmemory="1024m" doctitle="${doctitle}"
+                 windowtitle="${windowtitle}" author="false"
+                 overview="${src}/OS.html" classpathref="classpath"
+                 stylesheetfile="docs/stylesheet.css">
+            <link href="http://java.sun.com/j2ee/1.4/docs/api/" />
+            <link href="http://java.sun.com/j2se/1.5.0/docs/api/" />
+            <link href="http://www.naradabrokering.org/api/" />
+            <fileset dir="${src}"/>
+        </javadoc>
+    </target>
+
+    <target name="clean" depends="releaseclean">
+        <delete dir="${docs}" />
+        <delete file="${dist}/${ant.project.name}.jar" />
+    </target>
+
+    <target name="releaseclean">
+        <delete dir="${build}" />
+        <delete dir="release" />
+        <delete file="${ant.project.name}-${project.version}.zip" />
+    </target>
+
+    <target name="release" depends="compile,jar,javadoc,releaseclean">
+        <echo>Generating release ${project.version}</echo>
+        <echo>Built by: ${user.name} on ${build.date}</echo>
+        <echo>Operating System: ${os.name} ${os.version}</echo>
+
+        <property name="reldir"
+            value="release/${ant.project.name}-${project.version}" />
+        <mkdir dir="${reldir}" />
+        <copy todir="${reldir}">
+            <fileset dir="." />
+        </copy>
+        <delete dir="${reldir}/${reldir}" />
+        <delete includeemptydirs="true">
+            <fileset dir="${reldir}"
+                     includes="**/.svn" defaultexcludes="false"/>
+        </delete>
+        <zip destfile="${ant.project.name}-${project.version}.zip"
+             basedir="release" />
+        <delete dir="release" />
+    </target>
+</project>
