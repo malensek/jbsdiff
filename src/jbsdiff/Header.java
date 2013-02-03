@@ -25,10 +25,10 @@ public class Header {
     /** Magic number to mark the start of a bsdiff header. */
     public static final String HEADER_MAGIC = "BSDIFF40";
 
-    public String magic;
-    public int controlLength;
-    public int diffLength;
-    public int outLength;
+    private String magic;
+    private int controlLength;
+    private int diffLength;
+    private int outLength;
 
     public Header() { }
 
