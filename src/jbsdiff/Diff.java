@@ -135,18 +135,18 @@ public class Diff {
         System.out.println(countOut.getCount());
 
         Header header = new Header();
-        header.controlLength = countOut.getCount();
+        header.setControlLength(countOut.getCount());
 
         patchOut = new BZip2CompressorOutputStream(countOut, 9);
         patchOut.write(db);
         patchOut.close();
-        header.diffLength = countOut.getCount() - header.controlLength;
+        header.setDiffLength(countOut.getCount() - header.getControlLength());
 
         patchOut = new BZip2CompressorOutputStream(countOut, 9);
         patchOut.write(eb);
         patchOut.close();
 
-        header.outLength = newBytes.length;
+        header.setOutputLength(newBytes.length);
 
         //header.write(headerOut);
 

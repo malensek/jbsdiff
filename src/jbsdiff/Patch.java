@@ -1,68 +1,45 @@
 package jbsdiff;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 public class Patch {
 
-    private final File oldFile;
-    private final File newFile;
-    private final File patchFile;
-
-    public Patch(File oldFile, File newFile, File patchFile) {
-        this.oldFile = oldFile;
-        this.newFile = newFile;
-        this.patchFile = patchFile;
-    }
-
-    public static void main(String[] args) throws Exception {
-        File oldFile = new File(args[0]);
-        File newFile = new File(args[1]);
-        File patchFile = new File(args[2]);
-
-        Patch p = new Patch(oldFile, newFile, patchFile);
-        p.patch();
-    }
-
-    public void patch() throws Exception {
+    public static void patch(byte[] old, byte[] patch, OutputStream out)
+    throws Exception {
         /* Read bsdiff header */
-        InputStream headerIn = new DataInputStream(new FileInputStream(patchFile));
+        InputStream headerIn = new ByteArrayInputStream(patch);
         Header header = new Header(headerIn);
         headerIn.close();
 
         /* Set up InputStreams for various offsets in the patch file */
         InputStream controlIn, dataIn, extraIn;
-        controlIn = new DataInputStream(new FileInputStream(patchFile));
-        dataIn = new DataInputStream(new FileInputStream(patchFile));
-        extraIn = new DataInputStream(new FileInputStream(patchFile));
-
-        InputStream oldIn;
-        oldIn = new FileInputStream(oldFile);
+        controlIn = new ByteArrayInputStream(patch);
+        dataIn = new ByteArrayInputStream(patch);
+        extraIn = new ByteArrayInputStream(patch);
 
         try {
             /* Seek to the correct offsets in each stream */
             controlIn.skip(Header.HEADER_SIZE);
-            dataIn.skip(Header.HEADER_SIZE + header.controlLength);
-            extraIn.skip(Header.HEADER_SIZE + header.controlLength +
-                    header.diffLength);
+            dataIn.skip(Header.HEADER_SIZE + header.getControlLength());
+            extraIn.skip(Header.HEADER_SIZE + header.getControlLength() +
+                    header.getDiffLength());
 
             /* Set up compressed streams */
             controlIn = new BZip2InputStream(controlIn);
-            System.out.println(Header.HEADER_SIZE + header.controlLength);
             dataIn = new BZip2InputStream(dataIn);
             extraIn = new BZip2InputStream(extraIn);
 
             /* Start patching */
-            int newPointer = 0;
+            int newPointer = 0, oldPointer = 0;
             int[] controlBlock = new int[3];
-            byte[] output = new byte[header.outLength];
+            int outputLength = header.getOutputLength();
+            byte[] output = new byte[outputLength];
             int read;
 
-            while (newPointer < header.outLength) {
+            while (newPointer < outputLength) {
 
                 /* Read control block */
                 for (int i = 0; i <= 2; ++i) {
@@ -76,17 +53,15 @@ public class Patch {
                 }
 
                 /* Add old data to diff string */
-                byte[] old = new byte[controlBlock[0]];
-                oldIn.read(old);
                 for (int i = 0; i < controlBlock[0]; ++i) {
-                    //if ((oldPointer + i >= 0) && (oldPointer + i < old.length)) {
-                        //output[newPointer + i] += old[oldPointer + i];
-                        output[newPointer + i] += old[i];
-                    //}
+                    if ((oldPointer + i >= 0) && oldPointer + i < old.length) {
+                        output[newPointer + i] += old[oldPointer + i];
+                    }
                 }
 
-                /* Adjust pointer */
+                /* Adjust pointers */
                 newPointer += controlBlock[0];
+                oldPointer += controlBlock[0];
 
                 /* Sanity-check */
 //                if (newPointer + controlBlock[1] > outLen)
@@ -101,12 +76,10 @@ public class Patch {
 
                 /* Adjust pointers */
                 newPointer += controlBlock[1];
-                oldIn.skip(controlBlock[2]);
+                oldPointer += controlBlock[2];
             }
 
-            FileOutputStream fOut = new FileOutputStream(newFile);
-            fOut.write(output);
-            fOut.close();
+            out.write(output);
 
         } catch (Exception e) {
             throw e;
@@ -114,8 +87,6 @@ public class Patch {
             controlIn.close();
             dataIn.close();
             extraIn.close();
-
-            oldIn.close();
         }
     }
 }
