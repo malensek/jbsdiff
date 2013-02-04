@@ -58,7 +58,6 @@ class Offset {
      */
     public static void writeOffset(int value, OutputStream out)
     throws IOException {
-        System.out.println("writing " + value);
         byte[] buf = new byte[OFFSET_SIZE];
         int y = 0;
 
