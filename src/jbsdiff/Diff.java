@@ -8,6 +8,11 @@ import java.io.OutputStream;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 
+import jbsdiff.sort.SuffixSort;
+import jbsdiff.sort.SearchResult;
+
+import jbsdiff.streams.CountingOutputStream;
+
 /**
  *
  * @author malensek

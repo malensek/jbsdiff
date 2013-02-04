@@ -17,7 +17,7 @@ import java.io.OutputStream;
  * @author malensek
  */
 
-public class Header {
+class Header {
 
     /** Size of the Header, in bytes.  4 fields * 8 bytes = 32 bytes */
     public static final int HEADER_SIZE = 32;

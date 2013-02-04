@@ -5,16 +5,35 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import jbsdiff.streams.Bz2Compressor;
+import jbsdiff.streams.StreamCompressor;
+
+/**
+ * This class provides functionality for using an old file and a patch to
+ * generate a new file using the bsdiff patching algorithm.
+ *
+ * @author malensek
+ */
 public class Patch {
 
     public static void patch(byte[] old, byte[] patch, OutputStream out)
+    throws Exception {
+        patch(old, patch, out, new Bz2Compressor());
+    }
+
+    /**
+     * Using an old file and its accompanying patch, this method generates a new
+     * (updated) file and writes it to an {@link OutputStream}.
+     */
+    public static void patch(byte[] old, byte[] patch, OutputStream out,
+            StreamCompressor compressor)
     throws Exception {
         /* Read bsdiff header */
         InputStream headerIn = new ByteArrayInputStream(patch);
         Header header = new Header(headerIn);
         headerIn.close();
 
-        /* Set up InputStreams for various offsets in the patch file */
+        /* Set up InputStreams for reading different regions of the patch */
         InputStream controlIn, dataIn, extraIn;
         controlIn = new ByteArrayInputStream(patch);
         dataIn = new ByteArrayInputStream(patch);
@@ -28,55 +47,35 @@ public class Patch {
                     header.getDiffLength());
 
             /* Set up compressed streams */
-            controlIn = new BZip2InputStream(controlIn);
-            dataIn = new BZip2InputStream(dataIn);
-            extraIn = new BZip2InputStream(extraIn);
+            controlIn = compressor.compressStream(controlIn);
+            dataIn = compressor.compressStream(dataIn);
+            extraIn = compressor.compressStream(extraIn);
 
             /* Start patching */
             int newPointer = 0, oldPointer = 0;
-            int[] controlBlock = new int[3];
-            int outputLength = header.getOutputLength();
-            byte[] output = new byte[outputLength];
-            int read;
+            byte[] output = new byte[header.getOutputLength()];
+            while (newPointer < output.length) {
 
-            while (newPointer < outputLength) {
-
-                /* Read control block */
-                for (int i = 0; i <= 2; ++i) {
-                    controlBlock[i] = Offset.readOffset(controlIn);
-                }
+                ControlBlock control = new ControlBlock(controlIn);
 
                 /* Read diff string */
-                read = dataIn.read(output, newPointer, controlBlock[0]);
-                if (read < controlBlock[0]) {
-                    throw new IOException("Corrupt patch");
-                }
+                read(dataIn, output, newPointer, control.getDiffLength());
 
                 /* Add old data to diff string */
-                for (int i = 0; i < controlBlock[0]; ++i) {
+                for (int i = 0; i < control.getDiffLength(); ++i) {
                     if ((oldPointer + i >= 0) && oldPointer + i < old.length) {
                         output[newPointer + i] += old[oldPointer + i];
                     }
                 }
 
-                /* Adjust pointers */
-                newPointer += controlBlock[0];
-                oldPointer += controlBlock[0];
+                newPointer += control.getDiffLength();
+                oldPointer += control.getDiffLength();
 
-                /* Sanity-check */
-//                if (newPointer + controlBlock[1] > outLen)
-//                    err("Corrupt patch\n");
+                /* Copy the extra string to the output */
+                read(extraIn, output, newPointer, control.getExtraLength());
 
-                /* Read extra string */
-                read = extraIn.read(output, newPointer, controlBlock[1]);
-                if (read < controlBlock[1]) {
-                    System.out.println("cb = " + controlBlock[1] + "read = " + read);
-                    throw new IOException("Corrupt patch");
-                }
-
-                /* Adjust pointers */
-                newPointer += controlBlock[1];
-                oldPointer += controlBlock[2];
+                newPointer += control.getExtraLength();
+                oldPointer += control.getSeekLength();
             }
 
             out.write(output);
@@ -87,6 +86,31 @@ public class Patch {
             controlIn.close();
             dataIn.close();
             extraIn.close();
+        }
+    }
+
+    /**
+     * Reads data from an InputStream, and throws an {@link IOException} if
+     * fewer bytes were read than requested.  Since the lengths of data in a
+     * bsdiff patch are explicitly encoded in the control blocks, reading less
+     * than expected is an unrecoverable error.
+     *
+     * @param in InputStream to read from
+     * @param dest byte array to read data into
+     * @param off offset in dest to write data at
+     * @param len length of the read
+     */
+    private static void read(InputStream in, byte[] dest, int off, int len)
+    throws IOException {
+        if (len == 0) {
+            /* We don't need to do anything */
+            return;
+        }
+
+        int read = in.read(dest, off, len);
+        if (read < len) {
+            throw new IOException("Corrupt patch; bytes expected = " + len +
+                    " bytes read = " + read);
         }
     }
 }

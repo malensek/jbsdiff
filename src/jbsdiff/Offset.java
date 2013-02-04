@@ -12,7 +12,7 @@ import java.io.OutputStream;
  *
  * @author malensek
  */
-public class Offset {
+class Offset {
 
     /** Size of a bsdiff-encoded offset, in bytes. */
     public static final int OFFSET_SIZE = 8;
