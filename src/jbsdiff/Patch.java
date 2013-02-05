@@ -67,9 +67,9 @@ public class Patch {
 
             /* Set up compressed streams */
             CompressorStreamFactory compressor = new CompressorStreamFactory();
-            compressor.createCompressorInputStream(controlIn);
-            compressor.createCompressorInputStream(dataIn);
-            compressor.createCompressorInputStream(extraIn);
+            controlIn = compressor.createCompressorInputStream(controlIn);
+            dataIn = compressor.createCompressorInputStream(dataIn);
+            extraIn = compressor.createCompressorInputStream(extraIn);
 
             /* Start patching */
             int newPointer = 0, oldPointer = 0;
