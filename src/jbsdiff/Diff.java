@@ -11,16 +11,29 @@ import jbsdiff.sort.SuffixSort;
 import jbsdiff.sort.SearchResult;
 
 /**
+ * This class provides functionality for generating bsdiff patches from two
+ * source files (an old and new file).  Using the differences between the old
+ * and new files, a bsdiff patch can be applied to an old file to generate a
+ * copy of the new file.
  *
  * @author malensek
  */
 public class Diff {
 
+    /**
+     * Using two different versions of a file, generate a bsdiff patch that can
+     * be applied to the old file to create the new file.  Uses the default
+     * bzip2 compression algorithm.
+     */
     public static void diff(byte[] oldBytes, byte[] newBytes, OutputStream out)
     throws CompressorException, InvalidHeaderException, IOException {
         diff(oldBytes, newBytes, out, CompressorStreamFactory.BZIP2);
     }
 
+    /**
+     * Using two different versions of a file, generate a bsdiff patch that can
+     * be applied to the old file to create the new file.
+     */
     public static void diff(byte[] oldBytes, byte[] newBytes, OutputStream out,
             String compression)
     throws CompressorException, InvalidHeaderException, IOException {
@@ -36,7 +49,7 @@ public class Diff {
             compressor.createCompressorOutputStream(compression, countOut);
 
         SearchResult result = null;
-        int scan = 0, len = 0;
+        int scan = 0, len = 0, position = 0;
         int lastScan = 0, lastPos = 0, lastOffset = 0;
         int oldScore = 0, scsc = 0;
         int s, Sf, lenf, Sb, lenb;
@@ -54,7 +67,8 @@ public class Diff {
                         oldBytes, 0,
                         newBytes, scan,
                         0, oldBytes.length);
-                len = result.length;
+                len = result.getLength();
+                position = result.getPosition();
 
                 for ( ; scsc < scan + len; scsc++) {
                     if ((scsc + lastOffset < oldBytes.length) &&
@@ -91,8 +105,8 @@ public class Diff {
                     s = 0;
                     Sb = 0;
                     for (int i = 1; (scan >= lastScan + i) &&
-                            (result.position >= i); i++) {
-                        if (oldBytes[result.position - i] ==
+                            (position >= i); i++) {
+                        if (oldBytes[position - i] ==
                                 newBytes[scan - i]) {
                             s++;
                         }
@@ -114,7 +128,7 @@ public class Diff {
                             s++;
                         }
                         if (newBytes[scan - lenb + i]==
-                                oldBytes[result.position - lenb + i]) {
+                                oldBytes[position - lenb + i]) {
                             s--;
                         }
                         if (s > Ss) {
@@ -130,6 +144,7 @@ public class Diff {
                     db[dblen + i] |= (newBytes[lastScan + i] -
                             oldBytes[lastPos + i]);
                 }
+
                 for (int i = 0; i < (scan - lenb) - (lastScan + lenf); i++) {
                     eb[eblen + i] = newBytes[lastScan + lenf + i];
                 }
@@ -140,14 +155,13 @@ public class Diff {
                 ControlBlock control = new ControlBlock();
                 control.setDiffLength(lenf);
                 control.setExtraLength((scan - lenb) - (lastScan + lenf));
-                control.setSeekLength((result.position - lenb) -
+                control.setSeekLength((position - lenb) -
                         (lastPos + lenf));
                 control.write(patchOut);
 
                 lastScan = scan - lenb;
-                lastPos = result.position - lenb;
-                lastOffset = result.position - scan;
-
+                lastPos = position - lenb;
+                lastOffset = position - scan;
             }
         }
         /* Done writing control blocks */

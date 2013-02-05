@@ -9,10 +9,10 @@ package jbsdiff.sort;
 public class SearchResult {
 
     /** Number of matched bytes */
-    public int length;
+    private int length;
 
     /** Position of the result in the suffix array */
-    public int position;
+    private int position;
 
     public SearchResult(int length, int position) {
         this.length = length;
@@ -22,5 +22,13 @@ public class SearchResult {
     @Override
     public String toString() {
         return new String("length = " + length + ", position = " + position);
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public int getPosition() {
+        return position;
     }
 }

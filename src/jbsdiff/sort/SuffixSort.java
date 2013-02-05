@@ -1,5 +1,10 @@
 package jbsdiff.sort;
 
+/**
+ * Implements the suffix sorting and binary search algorithms found in bsdiff.
+ *
+ * @author malensek
+ */
 public class SuffixSort {
     public static void qsufsort(int[] I, int[] V, byte[] data) {
         int[] buckets = new int[256];
