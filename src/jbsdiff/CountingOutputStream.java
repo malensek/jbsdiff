@@ -1,4 +1,4 @@
-package jbsdiff.streams;
+package jbsdiff;
 
 import java.io.IOException;
 import java.io.OutputStream;

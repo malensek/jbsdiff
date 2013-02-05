@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import jbsdiff.streams.Bz2Compressor;
-import jbsdiff.streams.StreamCompressor;
+import org.apache.commons.compress.compressors.CompressorException;
+import org.apache.commons.compress.compressors.CompressorStreamFactory;
 
 /**
  * This class provides functionality for using an old file and a patch to
@@ -16,18 +16,12 @@ import jbsdiff.streams.StreamCompressor;
  */
 public class Patch {
 
-    public static void patch(byte[] old, byte[] patch, OutputStream out)
-    throws Exception {
-        patch(old, patch, out, new Bz2Compressor());
-    }
-
     /**
      * Using an old file and its accompanying patch, this method generates a new
      * (updated) file and writes it to an {@link OutputStream}.
      */
-    public static void patch(byte[] old, byte[] patch, OutputStream out,
-            StreamCompressor compressor)
-    throws Exception {
+    public static void patch(byte[] old, byte[] patch, OutputStream out)
+    throws CompressorException, InvalidHeaderException, IOException {
         /* Read bsdiff header */
         InputStream headerIn = new ByteArrayInputStream(patch);
         Header header = new Header(headerIn);
@@ -47,9 +41,10 @@ public class Patch {
                     header.getDiffLength());
 
             /* Set up compressed streams */
-            controlIn = compressor.compressStream(controlIn);
-            dataIn = compressor.compressStream(dataIn);
-            extraIn = compressor.compressStream(extraIn);
+            CompressorStreamFactory compressor = new CompressorStreamFactory();
+            compressor.createCompressorInputStream(controlIn);
+            compressor.createCompressorInputStream(dataIn);
+            compressor.createCompressorInputStream(extraIn);
 
             /* Start patching */
             int newPointer = 0, oldPointer = 0;

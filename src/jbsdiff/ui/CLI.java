@@ -1,10 +1,6 @@
 package jbsdiff.ui;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-
-import jbsdiff.Patch;
 
 /**
  * Provides a simple command line interface for the jbsdiff tools.
@@ -13,34 +9,6 @@ import jbsdiff.Patch;
  */
 public class CLI {
 
-    public CLI() { }
-
-    public void diff(File oldFile, File newFile, File patchFile) {
-
-    }
-
-    public void patch(File oldFile, File newFile, File patchFile)
-    throws Exception {
-        System.out.println(oldFile.getName());
-        FileInputStream oldIn = new FileInputStream(oldFile);
-        byte[] oldBytes = new byte[(int) oldFile.length()];
-        oldIn.read(oldBytes);
-        oldIn.close();
-
-        FileInputStream patchIn = new FileInputStream(patchFile);
-        byte[] patchBytes = new byte[(int) patchFile.length()];
-        patchIn.read(patchBytes);
-        patchIn.close();
-
-        FileOutputStream out = new FileOutputStream(newFile);
-        Patch.patch(oldBytes, patchBytes, out);
-        out.close();
-    }
-
-//    private static StreamCompressor getCompressor() {
-//
-//    }
-
     public static void main(String[] args) throws Exception {
         if (args.length < 4) {
             System.out.println("Not enough parameters!");
@@ -48,7 +16,7 @@ public class CLI {
             printUsage();
         }
 
-        CLI cli = new CLI();
+        String compression = System.getProperty("jbsdiff.compressor", "bzip2");
 
         try {
             String command = args[0].toLowerCase();
@@ -57,9 +25,9 @@ public class CLI {
             File patchFile = new File(args[3]);
 
             if (command.equals("diff")) {
-                cli.diff(oldFile, newFile, patchFile);
+                FileUI.diff(oldFile, newFile, patchFile, compression);
             } else if(command.equals("patch")) {
-                cli.patch(oldFile, newFile, patchFile);
+                FileUI.patch(oldFile, newFile, patchFile);
             } else {
                 printUsage();
             }
@@ -73,14 +41,17 @@ public class CLI {
     public static void printUsage() {
         String nl = System.lineSeparator();
         String usage = "" +
-            "Usage: [diff|patch] oldfile newfile patchfile" + nl +
-            nl +
-            "The jbsdiff.compressor property can be used to change " +
-            "compression schemes:" + nl +
-            "java -jar jbsdiff.jar -Djbsdiff.compressor=bz2 " +
-            "a.bin b.bin c.patch" + nl +
-            nl +
-            "Supported compression schemes: bz2 (default), gz, xz" + nl;
+"Usage: [diff|patch] oldfile newfile patchfile" + nl + nl +
+
+"The jbsdiff.compressor property can be used to select a different " + nl +
+"compression scheme at runtime:" + nl + nl +
+
+"    java -Djbsdiff.compressor=gz -jar jbsdiff.jar diff a.bin b.bin patch.gz" +
+nl + nl +
+"Supported compression schemes: bzip2 (default), gz, pack200, xz." + nl + nl +
+"The compression algorithm used will be detected automatically during " + nl +
+"patch operations.  NOTE: algorithms other than bzip2 are incompatible " + nl +
+"with the reference implementation of bsdiff!";
 
         System.out.println(usage);
         System.exit(1);

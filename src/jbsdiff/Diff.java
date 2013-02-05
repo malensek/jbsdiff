@@ -1,49 +1,39 @@
 package jbsdiff;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
+import org.apache.commons.compress.compressors.CompressorException;
+import org.apache.commons.compress.compressors.CompressorStreamFactory;
 
 import jbsdiff.sort.SuffixSort;
 import jbsdiff.sort.SearchResult;
-
-import jbsdiff.streams.CountingOutputStream;
 
 /**
  *
  * @author malensek
  */
 public class Diff {
-    public static void main(String[] args) throws Exception {
-        File oldFile = new File(args[0]);
-        File newFile = new File(args[1]);
-        File patchFile = new File(args[2]);
 
-        Diff d = new Diff();
-        d.diff(oldFile, newFile, patchFile);
+    public static void diff(byte[] oldBytes, byte[] newBytes, OutputStream out)
+    throws CompressorException, InvalidHeaderException, IOException {
+        diff(oldBytes, newBytes, out, CompressorStreamFactory.BZIP2);
     }
 
-    public void diff(File oldFile, File newFile, File patchFile)
-    throws Exception{
-        FileInputStream oldIn = new FileInputStream(oldFile);
-        byte[] oldBytes = new byte[(int) oldFile.length()];
-        oldIn.read(oldBytes);
+    public static void diff(byte[] oldBytes, byte[] newBytes, OutputStream out,
+            String compression)
+    throws CompressorException, InvalidHeaderException, IOException {
+        CompressorStreamFactory compressor = new CompressorStreamFactory();
 
         int[] I = new int[oldBytes.length + 1];
         int[] V = new int[oldBytes.length + 1];
         SuffixSort.qsufsort(I, V, oldBytes);
 
-        FileInputStream newIn = new FileInputStream(newFile);
-        byte[] newBytes = new byte[(int) newFile.length()];
-        newIn.read(newBytes);
-
-        ByteArrayOutputStream fOut = new ByteArrayOutputStream();
-        CountingOutputStream countOut = new CountingOutputStream(fOut);
-        OutputStream patchOut = new BZip2CompressorOutputStream(countOut, 9);
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+        CountingOutputStream countOut = new CountingOutputStream(byteOut);
+        OutputStream patchOut =
+            compressor.createCompressorOutputStream(compression, countOut);
 
         SearchResult result = null;
         int scan = 0, len = 0;
@@ -56,7 +46,6 @@ public class Diff {
         byte[] eb = new byte[newBytes.length + 1];
         int dblen = 0, eblen = 0;
 
-        int ctr = 0;
         while (scan < newBytes.length) {
             oldScore=0;
 
@@ -65,7 +54,6 @@ public class Diff {
                         oldBytes, 0,
                         newBytes, scan,
                         0, oldBytes.length);
-                //System.out.println(result);
                 len = result.length;
 
                 for ( ; scsc < scan + len; scsc++) {
@@ -85,7 +73,8 @@ public class Diff {
 
             if ((len != oldScore) || (scan == newBytes.length)) {
                 s = 0; Sf = 0; lenf = 0;
-                for (int i = 0; (lastScan + i < scan) && (lastPos + i < oldBytes.length); ) {
+                for (int i = 0; (lastScan + i < scan) &&
+                        (lastPos + i < oldBytes.length); ) {
                     if (oldBytes[lastPos + i] == newBytes[lastScan + i]) {
                         s++;
                     }
@@ -101,8 +90,10 @@ public class Diff {
                 if (scan < newBytes.length) {
                     s = 0;
                     Sb = 0;
-                    for (int i = 1; (scan >= lastScan + i) && (result.position >= i); i++) {
-                        if (oldBytes[result.position - i] == newBytes[scan - i]) {
+                    for (int i = 1; (scan >= lastScan + i) &&
+                            (result.position >= i); i++) {
+                        if (oldBytes[result.position - i] ==
+                                newBytes[scan - i]) {
                             s++;
                         }
                         if (s * 2 - i > Sb * 2 - lenb) {
@@ -135,49 +126,50 @@ public class Diff {
                     lenb -= lens;
                 }
 
-                for(int i = 0; i < lenf; i++) {
+                for (int i = 0; i < lenf; i++) {
                     db[dblen + i] |= (newBytes[lastScan + i] -
                             oldBytes[lastPos + i]);
                 }
-                for(int i = 0; i < (scan - lenb) - (lastScan + lenf); i++) {
+                for (int i = 0; i < (scan - lenb) - (lastScan + lenf); i++) {
                     eb[eblen + i] = newBytes[lastScan + lenf + i];
                 }
 
                 dblen += lenf;
                 eblen += (scan - lenb) - (lastScan + lenf);
 
-                Offset.writeOffset(lenf, patchOut);
-                Offset.writeOffset((scan - lenb) - (lastScan + lenf), patchOut);
-                Offset.writeOffset((result.position - lenb) -
-                        (lastPos + lenf), patchOut);
-                ctr++;
+                ControlBlock control = new ControlBlock();
+                control.setDiffLength(lenf);
+                control.setExtraLength((scan - lenb) - (lastScan + lenf));
+                control.setSeekLength((result.position - lenb) -
+                        (lastPos + lenf));
+                control.write(patchOut);
 
                 lastScan = scan - lenb;
                 lastPos = result.position - lenb;
                 lastOffset = result.position - scan;
+
             }
         }
+        /* Done writing control blocks */
         patchOut.close();
 
         Header header = new Header();
         header.setControlLength(countOut.getCount());
 
-        patchOut = new BZip2CompressorOutputStream(countOut, 9);
+        patchOut =
+            compressor.createCompressorOutputStream(compression, countOut);
         patchOut.write(db);
         patchOut.close();
         header.setDiffLength(countOut.getCount() - header.getControlLength());
 
-        patchOut = new BZip2CompressorOutputStream(countOut, 9);
+        patchOut =
+            compressor.createCompressorOutputStream(compression, countOut);
         patchOut.write(eb);
         patchOut.close();
 
         header.setOutputLength(newBytes.length);
 
-        fOut.close();
-
-        FileOutputStream f = new FileOutputStream(patchFile);
-        header.write(f);
-        f.write(fOut.toByteArray());
-        f.close();
+        header.write(out);
+        out.write(byteOut.toByteArray());
     }
 }

@@ -32,6 +32,9 @@ class Header {
 
     public Header() { }
 
+    /**
+     * Read a bsdiff header from an InputStream.
+     */
     public Header(InputStream in) throws IOException, InvalidHeaderException {
         InputStream headerIn = new DataInputStream(in);
         byte[] buf = new byte[8];
@@ -59,6 +62,16 @@ class Header {
     }
 
     /**
+     * Writes the Header to an OutputStream.
+     */
+    public void write(OutputStream out) throws IOException {
+        out.write(HEADER_MAGIC.getBytes());
+        Offset.writeOffset(controlLength, out);
+        Offset.writeOffset(diffLength, out);
+        Offset.writeOffset(outLength, out);
+    }
+
+    /**
      * Verifies the values of the header fields.
      */
     private void verify() throws InvalidHeaderException {
@@ -74,6 +87,18 @@ class Header {
         if (outLength < 0) {
             throw new InvalidHeaderException("output file length", outLength);
         }
+    }
+
+    @Override
+    public String toString() {
+        String s = "";
+
+        s += magic + "\n";
+        s += "control bytes = " + controlLength + "\n";
+        s += "diff bytes = " + diffLength + "\n";
+        s += "output size = " + outLength + "\n";
+
+        return s;
     }
 
     public int getControlLength() {
@@ -101,27 +126,5 @@ class Header {
     public void setOutputLength(int length) throws InvalidHeaderException {
         outLength = length;
         verify();
-    }
-
-    /**
-     * Writes the Header to an OutputStream.
-     */
-    public void write(OutputStream out) throws IOException {
-        out.write(HEADER_MAGIC.getBytes());
-        Offset.writeOffset(controlLength, out);
-        Offset.writeOffset(diffLength, out);
-        Offset.writeOffset(outLength, out);
-    }
-
-    @Override
-    public String toString() {
-        String s = "";
-
-        s += magic + "\n";
-        s += "control bytes = " + controlLength + "\n";
-        s += "diff bytes = " + diffLength + "\n";
-        s += "output size = " + outLength + "\n";
-
-        return s;
     }
 }
