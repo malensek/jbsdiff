@@ -13,6 +13,11 @@ import jbsdiff.Patch;
 import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 
+/**
+ * Provides an interface for working with bsdiff files on disk.
+ *
+ * @author malensek
+ */
 public class FileUI {
 
     public static void diff(File oldFile, File newFile, File patchFile)
