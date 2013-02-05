@@ -121,7 +121,7 @@ class Header {
         s += magic + "\n";
         s += "control bytes = " + controlLength + "\n";
         s += "diff bytes = " + diffLength + "\n";
-        s += "output size = " + outLength + "\n";
+        s += "output size = " + outLength;
 
         return s;
     }
