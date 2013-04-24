@@ -58,7 +58,7 @@
                 value="${ant.project.name} ${project.version} Documentation" />
 
         <mkdir dir="${docs}" />
-        <javadoc sourcepath="${src}" destdir="${docs}"
+        <javadoc sourcepath="${src}" destdir="${docs}" classpathref="classpath"
                 doctitle="${doctitle}" windowtitle="${doctitle}" />
     </target>
 
