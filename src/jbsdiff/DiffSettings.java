@@ -43,7 +43,7 @@ public interface DiffSettings {
     /**
      * Defines the suffix sorting algorithm to be used during Diff creation.
      *
-     * @param V input array
+     * @param input input array
      *
      * @return Sorted array of indices
      */
