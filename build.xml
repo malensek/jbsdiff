@@ -1,10 +1,6 @@
 <?xml version="1.0" standalone="yes"?>
 
 <project name="jbsdiff" basedir="." default="jar">
-    <description>
-        Ant buildfile for the ${ant.project.name} distribution
-    </description>
-
     <!-- Build properties -->
     <property name="project.version" value="0.1" />
     <property name="project.url" value="http://matthew.malensek.net/projects/jbsdiff" />
@@ -17,50 +13,30 @@
     <property name="build" value="classes" />
     <property name="dist" value="lib" />
     <property name="docs" value="docs/javadoc" />
+    <property name="jar.name"
+            value="${dist}/${ant.project.name}-${project.version}.jar" />
 
-    <!-- javadoc properties -->
-    <property name="header" value="${ant.project.name}" />
-    <property name="Release" value="${project.version}" />
-    <property name="windowtitle"
-        value="${ant.project.name} Documentation ${Release}" />
-    <property name="doctitle"
-            value="${ant.project.name} ${Release} Package List" />
 
     <path id="classpath">
         <fileset dir="." includes="lib/*.jar" />
     </path>
 
-    <property name="jar.name"
-            value="${dist}/${ant.project.name}-${project.version}.jar" />
-
     <manifestclasspath property="jar.classpath" jarfile="${jar.name}">
         <classpath refid="classpath"/>
     </manifestclasspath>
 
-    <!-- Pre-build Preparation -->
-    <target name="prepare">
-        <!-- Create the time stamp -->
+    <target name="compile" description="Compile source files">
         <tstamp />
-        <!-- Create the build directory structure used by compile -->
         <mkdir dir="${build}" />
-    </target>
 
-    <!-- Compile Java source files -->
-    <target name="compile" depends="prepare" description="Compile Java sources">
-        <javac destdir="${build}" debug="on" fork="true"
-               memoryMaximumSize="128m" includeantruntime="false">
+        <javac destdir="${build}" debug="on" includeantruntime="false">
             <src path="${src}" />
             <classpath refid="classpath" />
+            <compilerarg value="-Xlint" />
         </javac>
-        <copy todir="classes">
-            <fileset dir="${src}">
-                <include name="**/*.class" />
-            </fileset>
-        </copy>
     </target>
 
     <target name="jar" depends="compile">
-        <!-- Create the ${dist}/lib directory -->
         <mkdir dir="${dist}" />
         <jar basedir="${build}"
                 jarfile="${jar.name}">
@@ -71,8 +47,6 @@
                 <attribute name="Specification-Version"
                            value="${project.version}" />
                 <attribute name="Specification-URL" value="${project.url}" />
-                <attribute name="Implementation-Version"
-                           value="${project.version}-${build.date}" />
                 <attribute name="Main-Class" value="jbsdiff.ui.CLI" />
                 <attribute name="Class-Path" value="${jar.classpath}"/>
             </manifest>
@@ -80,25 +54,23 @@
     </target>
 
     <target name="javadoc" description="Generates javadoc" depends="compile">
-        <echo message="Generating javadoc for ${ant.project.name}..." />
+        <property name="doctitle"
+                value="${ant.project.name} ${project.version} Documentation" />
+
         <mkdir dir="${docs}" />
-        <javadoc sourcepath="${src}" destdir="${docs}" useexternalfile="yes"
-                 doctitle="${doctitle}"
-                 windowtitle="${windowtitle}" author="false"
-                 classpathref="classpath"
-                 stylesheetfile="docs/stylesheet.css">
-            <fileset dir="${src}"/>
-        </javadoc>
+        <javadoc sourcepath="${src}" destdir="${docs}"
+                doctitle="${doctitle}" windowtitle="${doctitle}" />
     </target>
 
     <target name="clean" depends="releaseclean">
         <delete dir="${docs}" />
+        <delete file="${jar.name}" />
     </target>
 
     <target name="releaseclean">
         <delete dir="${build}" />
         <delete dir="release" />
-        <delete file="${jar.name}" />
+        <delete file="${ant.project.name}-${project.version}.zip" />
     </target>
 
     <target name="release" depends="compile,jar,javadoc,releaseclean">
@@ -110,13 +82,10 @@
             value="release/${ant.project.name}-${project.version}" />
         <mkdir dir="${reldir}" />
         <copy todir="${reldir}">
-            <fileset dir="." />
+            <!-- ignore hidden files -->
+            <fileset dir="." excludes="**/.*" />
         </copy>
-        <delete dir="${reldir}/${reldir}" />
-        <delete includeemptydirs="true">
-            <fileset dir="${reldir}"
-                     includes="**/.git" defaultexcludes="false"/>
-        </delete>
+        <delete dir="${reldir}/release" />
         <zip destfile="${ant.project.name}-${project.version}.zip"
              basedir="release" />
         <delete dir="release" />
