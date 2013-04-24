@@ -32,11 +32,6 @@ import java.io.OutputStream;
 import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 
-import org.jsuffixarrays.DeepShallow;
-import org.jsuffixarrays.DivSufSort;
-import org.jsuffixarrays.QSufSort;
-import org.jsuffixarrays.SAIS;
-
 import jbsdiff.sort.SuffixSort;
 import jbsdiff.sort.SearchResult;
 
