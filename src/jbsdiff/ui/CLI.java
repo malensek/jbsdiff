@@ -42,6 +42,7 @@ public class CLI {
         }
 
         String compression = System.getProperty("jbsdiff.compressor", "bzip2");
+        compression = compression.toLowerCase();
 
         try {
             String command = args[0].toLowerCase();
