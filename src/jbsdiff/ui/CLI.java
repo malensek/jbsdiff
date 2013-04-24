@@ -67,13 +67,15 @@ public class CLI {
     public static void printUsage() {
         String nl = System.lineSeparator();
         String usage = "" +
-"Usage: [diff|patch] oldfile newfile patchfile" + nl + nl +
+"Usage: COMMAND oldfile newfile patchfile" + nl + nl +
+
+"Where COMMAND is either 'diff' or 'patch.'" + nl + nl +
 
 "The jbsdiff.compressor property can be used to select a different " + nl +
 "compression scheme at runtime:" + nl + nl +
 
-"    java -Djbsdiff.compressor=gz -jar jbsdiff.jar diff a.bin b.bin patch.gz" +
-nl + nl +
+"    java -Djbsdiff.compressor=gz -jar jbsdiff-?.?.jar diff " +
+"a.bin b.bin patch.gz" + nl + nl +
 "Supported compression schemes: bzip2 (default), gz, pack200, xz." + nl + nl +
 "The compression algorithm used will be detected automatically during " + nl +
 "patch operations.  NOTE: algorithms other than bzip2 are incompatible " + nl +
