@@ -33,6 +33,8 @@ package jbsdiff;
 
 public class InvalidHeaderException extends Exception {
 
+    private static final long serialVersionUID = -3712364093810940826L;
+
     public InvalidHeaderException() {
         super();
     }
