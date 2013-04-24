@@ -32,6 +32,11 @@ import java.io.OutputStream;
 import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 
+import org.jsuffixarrays.DeepShallow;
+import org.jsuffixarrays.DivSufSort;
+import org.jsuffixarrays.QSufSort;
+import org.jsuffixarrays.SAIS;
+
 import jbsdiff.sort.SuffixSort;
 import jbsdiff.sort.SearchResult;
 
@@ -52,7 +57,7 @@ public class Diff {
      */
     public static void diff(byte[] oldBytes, byte[] newBytes, OutputStream out)
     throws CompressorException, InvalidHeaderException, IOException {
-        diff(oldBytes, newBytes, out, CompressorStreamFactory.BZIP2);
+        diff(oldBytes, newBytes, out, new DefaultDiffSettings());
     }
 
     /**
@@ -60,18 +65,16 @@ public class Diff {
      * be applied to the old file to create the new file.
      */
     public static void diff(byte[] oldBytes, byte[] newBytes, OutputStream out,
-            String compression)
+            DiffSettings settings)
     throws CompressorException, InvalidHeaderException, IOException {
         CompressorStreamFactory compressor = new CompressorStreamFactory();
+        String compression = settings.getCompression();
 
-        int[] I = new int[oldBytes.length + 1];
-        int[] V = new int[oldBytes.length + 1];
-        SuffixSort.qsufsort(I, V, oldBytes);
+        int[] I = settings.sort(oldBytes);
 
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-        CountingOutputStream countOut = new CountingOutputStream(byteOut);
-        OutputStream patchOut =
-            compressor.createCompressorOutputStream(compression, countOut);
+        OutputStream patchOut = 
+            compressor.createCompressorOutputStream(compression, byteOut);
 
         SearchResult result = null;
         int scan = 0, len = 0, position = 0;
@@ -193,16 +196,16 @@ public class Diff {
         patchOut.close();
 
         Header header = new Header();
-        header.setControlLength(countOut.getCount());
+        header.setControlLength(byteOut.size());
 
         patchOut =
-            compressor.createCompressorOutputStream(compression, countOut);
+            compressor.createCompressorOutputStream(compression, byteOut);
         patchOut.write(db);
         patchOut.close();
-        header.setDiffLength(countOut.getCount() - header.getControlLength());
+        header.setDiffLength(byteOut.size() - header.getControlLength());
 
         patchOut =
-            compressor.createCompressorOutputStream(compression, countOut);
+            compressor.createCompressorOutputStream(compression, byteOut);
         patchOut.write(eb);
         patchOut.close();
 

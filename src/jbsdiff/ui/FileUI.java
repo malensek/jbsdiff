@@ -31,7 +31,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import jbsdiff.DefaultDiffSettings;
 import jbsdiff.Diff;
+import jbsdiff.DiffSettings;
 import jbsdiff.InvalidHeaderException;
 import jbsdiff.Patch;
 
@@ -66,7 +68,8 @@ public class FileUI {
         newIn.close();
 
         FileOutputStream out = new FileOutputStream(patchFile);
-        Diff.diff(oldBytes, newBytes, out, compression);
+        DiffSettings settings = new DefaultDiffSettings(compression);
+        Diff.diff(oldBytes, newBytes, out, settings);
         out.close();
     }
 
