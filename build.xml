@@ -12,7 +12,7 @@
     <property name="src" value="src" />
     <property name="build" value="classes" />
     <property name="dist" value="lib" />
-    <property name="docs" value="docs/javadoc" />
+    <property name="docs" value="docs/api" />
     <property name="jar.name"
             value="${dist}/${ant.project.name}-${project.version}.jar" />
 
@@ -41,7 +41,7 @@
         <jar basedir="${build}"
                 jarfile="${jar.name}">
             <manifest>
-                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Built-By" value="${user.name}" />
                 <attribute name="Specification-Title"
                            value="${ant.project.name}" />
                 <attribute name="Specification-Version"
