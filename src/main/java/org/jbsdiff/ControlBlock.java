@@ -23,7 +23,7 @@ any theory of liability, whether in contract, strict liability, or tort
 software, even if advised of the possibility of such damage.
 */
 
-package jbsdiff;
+package org.jbsdiff;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,16 +42,23 @@ import java.io.OutputStream;
  */
 class ControlBlock {
 
-    /** Length of the patch diff block */
+    /**
+     * Length of the patch diff block
+     */
     private int diffLength;
 
-    /** Length of the patch extra block */
+    /**
+     * Length of the patch extra block
+     */
     private int extraLength;
 
-    /** Bytes to seek forward after completing the control block directives. */
+    /**
+     * Bytes to seek forward after completing the control block directives.
+     */
     private int seekLength;
 
-    public ControlBlock() { }
+    public ControlBlock() {
+    }
 
     /**
      * Read a bsdiff control block from an input stream.

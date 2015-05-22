@@ -23,13 +23,28 @@ any theory of liability, whether in contract, strict liability, or tort
 software, even if advised of the possibility of such damage.
 */
 
+package org.jbsdiff;
 
 /**
- * This library is a native Java implementation of bsdiff
- * (http://www.daemonology.net/bsdiff/).  The library provides diff and patch
- * functionality that is compatible with the reference implementation.
+ * Defines directives that control how the Diff process is carried out.
  *
- * Additional compression algorithms are also supported through the Apache
- * Commons Compress library.
+ * @author malensek
  */
-package jbsdiff;
+public interface DiffSettings {
+
+    /**
+     * Provides the name of the compression algorithm to use during diffing.
+     *
+     * @return String containing a compression algorithm name to be used by the
+     * Commons Compress CompressorStreamFactory.
+     */
+    public String getCompression();
+
+    /**
+     * Defines the suffix sorting algorithm to be used during Diff creation.
+     *
+     * @param input input array
+     * @return Sorted array of indices
+     */
+    public int[] sort(byte[] input);
+}

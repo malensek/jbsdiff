@@ -7,15 +7,24 @@ Usage
 =====
 jbsdiff can be used from its command line interface:
 
-java -jar jbsdiff-?.?.jar command oldfile newfile patchfile
+java -jar jbsdiff.jar command oldfile newfile patchfile
 
 Where *command* is either 'diff' or 'patch.'  You can also specify the
 compression algorithm used during a diff operation by setting a system property:
 
-java -Djbsdiff.compressor=gz -jar jbsdiff-?.?.jar diff a.bin b.bin patch.gz
+java -Djbsdiff.compressor=gz -jar jbsdiff.jar diff a.bin b.bin patch.gz
 
 Supported compression algorithms (from the Apache Commons Compress library) are
 bzip2 (the default), gz, pack200, and xz.
 
 ...but jbsdiff is mostly intended to be used as a library.  See the _ui_ package
 for usage examples.
+
+To compile the jar do a
+```
+mvn clean compile assembly:single
+```
+
+Also available at
+
+[![Clojars Project](http://clojars.org/org.jbsdiff/jbsdiff/latest-version.svg)](http://clojars.org/org.jbsdiff/jbsdiff)

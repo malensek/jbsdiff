@@ -23,7 +23,7 @@ any theory of liability, whether in contract, strict liability, or tort
 software, even if advised of the possibility of such damage.
 */
 
-package jbsdiff;
+package org.jbsdiff;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -33,7 +33,7 @@ import java.io.OutputStream;
 /**
  * Data structure that encapsulates a bsdiff header.  The header is composed of
  * 8-byte fields, starting with the magic number "BSDIFF40."
- *
+ * <p/>
  * 0: BSDIFF40
  * 8: length of control block
  * 16: length of the diff block
@@ -44,10 +44,14 @@ import java.io.OutputStream;
 
 class Header {
 
-    /** Size of the Header, in bytes.  4 fields * 8 bytes = 32 bytes */
+    /**
+     * Size of the Header, in bytes.  4 fields * 8 bytes = 32 bytes
+     */
     public static final int HEADER_SIZE = 32;
 
-    /** Magic number to mark the start of a bsdiff header. */
+    /**
+     * Magic number to mark the start of a bsdiff header.
+     */
     public static final String HEADER_MAGIC = "BSDIFF40";
 
     private String magic;
@@ -55,7 +59,8 @@ class Header {
     private int diffLength;
     private int outLength;
 
-    public Header() { }
+    public Header() {
+    }
 
     /**
      * Read a bsdiff header from an InputStream.
@@ -78,7 +83,7 @@ class Header {
     }
 
     public Header(int controlLength, int diffLength, int outLength)
-    throws InvalidHeaderException {
+            throws InvalidHeaderException {
         this.controlLength = controlLength;
         this.diffLength = diffLength;
         this.outLength = outLength;

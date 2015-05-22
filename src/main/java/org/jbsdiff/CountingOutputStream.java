@@ -23,37 +23,37 @@ any theory of liability, whether in contract, strict liability, or tort
 software, even if advised of the possibility of such damage.
 */
 
-package jbsdiff.sort;
+package org.jbsdiff;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
- * Represents a binary search result for a string of bytes, containing the
- * longest match found and the position in the sorted suffix array.
+ * A passthrough OutputStream implementation that counts (and can report) the
+ * number of bytes that have been written to the stream.
  *
  * @author malensek
  */
-public class SearchResult {
+public class CountingOutputStream extends OutputStream {
 
-    /** Number of matched bytes */
-    private int length;
+    private OutputStream out;
+    private int counter;
 
-    /** Position of the result in the suffix array */
-    private int position;
-
-    public SearchResult(int length, int position) {
-        this.length = length;
-        this.position = position;
+    public CountingOutputStream(OutputStream out) {
+        this.out = out;
     }
 
     @Override
-    public String toString() {
-        return new String("length = " + length + ", position = " + position);
+    public void write(int b) throws IOException {
+        counter++;
+        out.write(b);
     }
 
-    public int getLength() {
-        return length;
-    }
-
-    public int getPosition() {
-        return position;
+    /**
+     * Retrieves the number of bytes that have been written to this stream so
+     * far.
+     */
+    public int getCount() {
+        return counter;
     }
 }
