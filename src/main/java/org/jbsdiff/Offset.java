@@ -23,7 +23,7 @@ any theory of liability, whether in contract, strict liability, or tort
 software, even if advised of the possibility of such damage.
 */
 
-package jbsdiff;
+package org.jbsdiff;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +39,9 @@ import java.io.OutputStream;
  */
 class Offset {
 
-    /** Size of a bsdiff-encoded offset, in bytes. */
+    /**
+     * Size of a bsdiff-encoded offset, in bytes.
+     */
     public static final int OFFSET_SIZE = 8;
 
     /**
@@ -55,13 +57,20 @@ class Offset {
 
         int y = 0;
         y = buf[7] & 0x7F;
-        y *= 256; y += buf[6] & 0xFF;
-        y *= 256; y += buf[5] & 0xFF;
-        y *= 256; y += buf[4] & 0xFF;
-        y *= 256; y += buf[3] & 0xFF;
-        y *= 256; y += buf[2] & 0xFF;
-        y *= 256; y += buf[1] & 0xFF;
-        y *= 256; y += buf[0] & 0xFF;
+        y *= 256;
+        y += buf[6] & 0xFF;
+        y *= 256;
+        y += buf[5] & 0xFF;
+        y *= 256;
+        y += buf[4] & 0xFF;
+        y *= 256;
+        y += buf[3] & 0xFF;
+        y *= 256;
+        y += buf[2] & 0xFF;
+        y *= 256;
+        y += buf[1] & 0xFF;
+        y *= 256;
+        y += buf[0] & 0xFF;
 
         /* An integer overflow occurred */
         if (y < 0) {
@@ -82,7 +91,7 @@ class Offset {
      * @param value Integer value to encode and write
      */
     public static void writeOffset(int value, OutputStream out)
-    throws IOException {
+            throws IOException {
         byte[] buf = new byte[OFFSET_SIZE];
         int y = 0;
 
@@ -94,14 +103,28 @@ class Offset {
             y = value;
         }
 
-        buf[0] |= y % 256; y -= buf[0] & 0xFF;
-        y /= 256; buf[1] |= y % 256; y -= buf[1] & 0xFF;
-        y /= 256; buf[2] |= y % 256; y -= buf[2] & 0xFF;
-        y /= 256; buf[3] |= y % 256; y -= buf[3] & 0xFF;
-        y /= 256; buf[4] |= y % 256; y -= buf[4] & 0xFF;
-        y /= 256; buf[5] |= y % 256; y -= buf[5] & 0xFF;
-        y /= 256; buf[6] |= y % 256; y -= buf[6] & 0xFF;
-        y /= 256; buf[7] |= y % 256;
+        buf[0] |= y % 256;
+        y -= buf[0] & 0xFF;
+        y /= 256;
+        buf[1] |= y % 256;
+        y -= buf[1] & 0xFF;
+        y /= 256;
+        buf[2] |= y % 256;
+        y -= buf[2] & 0xFF;
+        y /= 256;
+        buf[3] |= y % 256;
+        y -= buf[3] & 0xFF;
+        y /= 256;
+        buf[4] |= y % 256;
+        y -= buf[4] & 0xFF;
+        y /= 256;
+        buf[5] |= y % 256;
+        y -= buf[5] & 0xFF;
+        y /= 256;
+        buf[6] |= y % 256;
+        y -= buf[6] & 0xFF;
+        y /= 256;
+        buf[7] |= y % 256;
 
         out.write(buf);
     }

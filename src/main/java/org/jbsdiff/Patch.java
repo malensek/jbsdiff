@@ -23,15 +23,15 @@ any theory of liability, whether in contract, strict liability, or tort
 software, even if advised of the possibility of such damage.
 */
 
-package jbsdiff;
+package org.jbsdiff;
+
+import org.apache.commons.compress.compressors.CompressorException;
+import org.apache.commons.compress.compressors.CompressorStreamFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import org.apache.commons.compress.compressors.CompressorException;
-import org.apache.commons.compress.compressors.CompressorStreamFactory;
 
 /**
  * This class provides functionality for using an old file and a patch to
@@ -46,7 +46,7 @@ public class Patch {
      * (updated) file and writes it to an {@link OutputStream}.
      */
     public static void patch(byte[] old, byte[] patch, OutputStream out)
-    throws CompressorException, InvalidHeaderException, IOException {
+            throws CompressorException, InvalidHeaderException, IOException {
         /* Read bsdiff header */
         InputStream headerIn = new ByteArrayInputStream(patch);
         Header header = new Header(headerIn);
@@ -115,13 +115,13 @@ public class Patch {
      * bsdiff patch are explicitly encoded in the control blocks, reading less
      * than expected is an unrecoverable error.
      *
-     * @param in InputStream to read from
+     * @param in   InputStream to read from
      * @param dest byte array to read data into
-     * @param off offset in dest to write data at
-     * @param len length of the read
+     * @param off  offset in dest to write data at
+     * @param len  length of the read
      */
     private static void read(InputStream in, byte[] dest, int off, int len)
-    throws IOException {
+            throws IOException {
         if (len == 0) {
             /* We don't need to do anything */
             return;

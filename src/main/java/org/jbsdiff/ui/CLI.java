@@ -23,12 +23,12 @@ any theory of liability, whether in contract, strict liability, or tort
 software, even if advised of the possibility of such damage.
 */
 
-package jbsdiff.ui;
+package org.jbsdiff.ui;
 
 import java.io.File;
 
 /**
- * Provides a simple command line interface for the jbsdiff tools.
+ * Provides a simple command line interface for the org.jbsdiff tools.
  *
  * @author malensek
  */
@@ -52,7 +52,7 @@ public class CLI {
 
             if (command.equals("diff")) {
                 FileUI.diff(oldFile, newFile, patchFile, compression);
-            } else if(command.equals("patch")) {
+            } else if (command.equals("patch")) {
                 FileUI.patch(oldFile, newFile, patchFile);
             } else {
                 printUsage();
@@ -67,19 +67,19 @@ public class CLI {
     public static void printUsage() {
         String nl = System.lineSeparator();
         String usage = "" +
-"Usage: COMMAND oldfile newfile patchfile" + nl + nl +
+                "Usage: COMMAND oldfile newfile patchfile" + nl + nl +
 
-"Where COMMAND is either 'diff' or 'patch.'" + nl + nl +
+                "Where COMMAND is either 'diff' or 'patch.'" + nl + nl +
 
-"The jbsdiff.compressor property can be used to select a different " + nl +
-"compression scheme at runtime:" + nl + nl +
+                "The jbsdiff.compressor property can be used to select a different " + nl +
+                "compression scheme at runtime:" + nl + nl +
 
-"    java -Djbsdiff.compressor=gz -jar jbsdiff-?.?.jar diff " +
-"a.bin b.bin patch.gz" + nl + nl +
-"Supported compression schemes: bzip2 (default), gz, pack200, xz." + nl + nl +
-"The compression algorithm used will be detected automatically during " + nl +
-"patch operations.  NOTE: algorithms other than bzip2 are incompatible " + nl +
-"with the reference implementation of bsdiff!";
+                "    java -Djbsdiff.compressor=gz -jar jbsdiff-?.?.jar diff " +
+                "a.bin b.bin patch.gz" + nl + nl +
+                "Supported compression schemes: bzip2 (default), gz, pack200, xz." + nl + nl +
+                "The compression algorithm used will be detected automatically during " + nl +
+                "patch operations.  NOTE: algorithms other than bzip2 are incompatible " + nl +
+                "with the reference implementation of bsdiff!";
 
         System.out.println(usage);
         System.exit(1);
