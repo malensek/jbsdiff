@@ -65,21 +65,20 @@ public class CLI {
     }
 
     public static void printUsage() {
-        String nl = System.lineSeparator();
-        String usage = "" +
-                "Usage: COMMAND oldfile newfile patchfile" + nl + nl +
+        String usage = String.format("" +
+                "Usage: COMMAND oldfile newfile patchfile%n%n" +
 
-                "Where COMMAND is either 'diff' or 'patch.'" + nl + nl +
+                "Where COMMAND is either 'diff' or 'patch.'%n%n" +
 
-                "The jbsdiff.compressor property can be used to select a different " + nl +
-                "compression scheme at runtime:" + nl + nl +
+                "The jbsdiff.compressor property can be used to select a different %n" +
+                "compression scheme at runtime:%n%n" +
 
                 "    java -Djbsdiff.compressor=gz -jar jbsdiff-?.?.jar diff " +
-                "a.bin b.bin patch.gz" + nl + nl +
-                "Supported compression schemes: bzip2 (default), gz, pack200, xz." + nl + nl +
-                "The compression algorithm used will be detected automatically during " + nl +
-                "patch operations.  NOTE: algorithms other than bzip2 are incompatible " + nl +
-                "with the reference implementation of bsdiff!";
+                "a.bin b.bin patch.gz%n%n" +
+                "Supported compression schemes: bzip2 (default), gz, pack200, xz.%n%n" +
+                "The compression algorithm used will be detected automatically during %n" +
+                "patch operations.  NOTE: algorithms other than bzip2 are incompatible %n" +
+                "with the reference implementation of bsdiff!");
 
         System.out.println(usage);
         System.exit(1);

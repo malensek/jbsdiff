@@ -100,8 +100,6 @@ public class Patch {
 
             out.write(output);
 
-        } catch (Exception e) {
-            throw e;
         } finally {
             controlIn.close();
             dataIn.close();
