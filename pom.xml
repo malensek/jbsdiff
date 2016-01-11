@@ -6,7 +6,6 @@
 
     <groupId>org.jbsdiff</groupId>
     <artifactId>jbsdiff</artifactId>
-    <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
@@ -23,6 +22,7 @@
             <url>https://opensource.org/licenses/BSD-2-Clause</url>
         </license>
     </licenses>
+
     <developers>
         <developer>
             <name>Matthew Malensek</name>
@@ -37,6 +37,9 @@
         <developerConnection>scm:git:git@github.com:malensek/jbsdiff.git</developerConnection>
         <url>git@github.com:malensek/jbsdiff.git</url>
     </scm>
+
+    <packaging>jar</packaging>
+
     <build>
         <finalName>jbsdiff</finalName>
         <resources>
