@@ -23,6 +23,20 @@
             <url>https://opensource.org/licenses/BSD-2-Clause</url>
         </license>
     </licenses>
+    <developers>
+        <developer>
+            <name>Matthew Malensek</name>
+            <email>matt@malensek.net</email>
+            <url>http://matthew.malensek.net</url>
+            <organization>Colorado State University</organization>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:malensek/jbsdiff.git</connection>
+        <developerConnection>scm:git:git@github.com:malensek/jbsdiff.git</developerConnection>
+        <url>git@github.com:malensek/jbsdiff.git</url>
+    </scm>
     <build>
         <finalName>jbsdiff</finalName>
         <resources>
