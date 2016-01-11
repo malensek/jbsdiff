@@ -17,6 +17,12 @@
     </description>
     <url>http://jbsdiff.org</url>
 
+    <licenses>
+        <license>
+            <name>BSD 2-Clause License</name>
+            <url>https://opensource.org/licenses/BSD-2-Clause</url>
+        </license>
+    </licenses>
     <build>
         <finalName>jbsdiff</finalName>
         <resources>
