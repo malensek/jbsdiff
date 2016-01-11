@@ -9,6 +9,13 @@
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
 
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>
+        Java port of bsdiff by Colin Percival
+        (http://www.daemonology.net/bsdiff/), a tool for creating
+        space-efficient binary patch files.
+    </description>
+    <url>http://jbsdiff.org</url>
 
     <build>
         <finalName>jbsdiff</finalName>
