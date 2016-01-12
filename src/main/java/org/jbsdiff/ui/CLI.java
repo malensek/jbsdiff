@@ -37,7 +37,6 @@ public class CLI {
     public static void main(String[] args) throws Exception {
         if (args.length < 4) {
             System.out.println("Not enough parameters!");
-            System.out.println();
             printUsage();
         }
 
@@ -66,15 +65,17 @@ public class CLI {
 
     public static void printUsage() {
         String usage = String.format("" +
-                "Usage: COMMAND oldfile newfile patchfile%n%n" +
+                "Usage: command <oldfile> <newfile> <patchfile>%n%n" +
 
-                "Where COMMAND is either 'diff' or 'patch.'%n%n" +
+                "Commands:%n" +
+                "    diff%n" +
+                "    patch%n%n" +
 
-                "The jbsdiff.compressor property can be used to select a different %n" +
-                "compression scheme at runtime:%n%n" +
-
-                "    java -Djbsdiff.compressor=gz -jar jbsdiff-?.?.jar diff " +
+                "Use the jbsdiff.compressor property to select a different " +
+                "compression scheme:%n" +
+                "    java -Djbsdiff.compressor=gz -jar jbsdiff-*.jar diff " +
                 "a.bin b.bin patch.gz%n%n" +
+
                 "Supported compression schemes: bzip2 (default), gz, pack200, xz.%n%n" +
                 "The compression algorithm used will be detected automatically during %n" +
                 "patch operations.  NOTE: algorithms other than bzip2 are incompatible %n" +
