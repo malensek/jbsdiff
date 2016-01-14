@@ -52,7 +52,13 @@ public class Diff {
      * @param oldBytes    The original ('old') state of the file/binary.
      * @param newBytes    New state of the file/binary that will be compared
      *                        to create a patch file
-     * @param out         {@link OutputStream} to write the patch file to
+     * @param out         An {@link OutputStream} to write the patch file to
+     *
+     * @throws CompressorException when a compression error occurs.
+     * @throws InvalidHeaderException when the bsdiff header is malformed or not
+     *     present.
+     * @throws IOException when an error occurs writing the bsdiff control
+     *     blocks.
      */
     public static void diff(byte[] oldBytes, byte[] newBytes, OutputStream out)
             throws CompressorException, InvalidHeaderException, IOException {
@@ -62,6 +68,20 @@ public class Diff {
     /**
      * Using two different versions of a file, generate a bsdiff patch that can
      * be applied to the old file to create the new file.
+     *
+     * @param oldBytes    The original ('old') state of the file/binary.
+     * @param newBytes    New state of the file/binary that will be compared
+     *                        to create a patch file
+     * @param out         An {@link OutputStream} to write the patch file to
+     * @param settings    A {@link DiffSettings} implementation, which defines
+     *                        the compression and suffix sort algorithms to
+     *                        create the patch with.
+     *
+     * @throws CompressorException when a compression error occurs.
+     * @throws InvalidHeaderException when the bsdiff header is malformed or not
+     *     present.
+     * @throws IOException when an error occurs writing the bsdiff control
+     *     blocks.
      */
     public static void diff(byte[] oldBytes, byte[] newBytes, OutputStream out,
                             DiffSettings settings)
@@ -193,6 +213,7 @@ public class Diff {
                 lastOffset = position - scan;
             }
         }
+
         /* Done writing control blocks */
         patchOut.close();
 

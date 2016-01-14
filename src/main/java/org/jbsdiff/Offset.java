@@ -47,6 +47,11 @@ class Offset {
     /**
      * Reads a bsdiff-encoded offset (based on the C off_t type) from an
      * {@link InputStream}.
+     *
+     * @param in The InputStream to read a bsdiff offset from
+     *
+     * @throws IOException when there are not enough bytes in the
+     *     {@link InputStream} or an overflow occurs.
      */
     public static int readOffset(InputStream in) throws IOException {
         byte[] buf = new byte[OFFSET_SIZE];
@@ -88,7 +93,9 @@ class Offset {
     /**
      * Writes a bsdiff-encoded offset to an {@link OutputStream}.
      *
-     * @param value Integer value to encode and write
+     * @param value Integer value to encode and write.
+     *
+     * @throws IOException if an I/O error occurs.
      */
     public static void writeOffset(int value, OutputStream out)
             throws IOException {
