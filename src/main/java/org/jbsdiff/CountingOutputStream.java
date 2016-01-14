@@ -52,6 +52,8 @@ public class CountingOutputStream extends OutputStream {
     /**
      * Retrieves the number of bytes that have been written to this stream so
      * far.
+     *
+     * @return byte count
      */
     public int getCount() {
         return counter;
