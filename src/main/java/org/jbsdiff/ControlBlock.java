@@ -62,6 +62,8 @@ class ControlBlock {
 
     /**
      * Read a bsdiff control block from an input stream.
+     *
+     * @throws IOException if I/O errors occur while reading a bsdiff offset.
      */
     public ControlBlock(InputStream in) throws IOException {
         diffLength = Offset.readOffset(in);
@@ -77,6 +79,8 @@ class ControlBlock {
 
     /**
      * Writes a ControlBlock to an OutputStream.
+     *
+     * @throws IOException if I/O errors occur while writing a bsdiff offset.
      */
     public void write(OutputStream out) throws IOException {
         Offset.writeOffset(diffLength, out);
