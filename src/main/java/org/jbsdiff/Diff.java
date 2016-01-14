@@ -48,6 +48,11 @@ public class Diff {
      * Using two different versions of a file, generate a bsdiff patch that can
      * be applied to the old file to create the new file.  Uses the default
      * bzip2 compression algorithm.
+     *
+     * @param oldBytes    The original ('old') state of the file/binary.
+     * @param newBytes    New state of the file/binary that will be compared
+     *                        to create a patch file
+     * @param out         {@link OutputStream} to write the patch file to
      */
     public static void diff(byte[] oldBytes, byte[] newBytes, OutputStream out)
             throws CompressorException, InvalidHeaderException, IOException {

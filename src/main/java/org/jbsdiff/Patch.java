@@ -44,6 +44,10 @@ public class Patch {
     /**
      * Using an old file and its accompanying patch, this method generates a new
      * (updated) file and writes it to an {@link OutputStream}.
+     *
+     * @param old    the original ('old') state of the binary
+     * @param patch  a binary patch file to apply to the old state
+     * @param out    an {@link OutputStream} to write the patched binary to
      */
     public static void patch(byte[] old, byte[] patch, OutputStream out)
             throws CompressorException, InvalidHeaderException, IOException {
