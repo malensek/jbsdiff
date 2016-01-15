@@ -48,6 +48,11 @@ public class Patch {
      * @param old    the original ('old') state of the binary
      * @param patch  a binary patch file to apply to the old state
      * @param out    an {@link OutputStream} to write the patched binary to
+     *
+     * @throws CompressorException when a compression error occurs.
+     * @throws InvalidHeaderException when the bsdiff header is malformed or not
+     *     present.
+     * @throws IOException when an I/O error occurs
      */
     public static void patch(byte[] old, byte[] patch, OutputStream out)
             throws CompressorException, InvalidHeaderException, IOException {
@@ -121,6 +126,8 @@ public class Patch {
      * @param dest byte array to read data into
      * @param off  offset in dest to write data at
      * @param len  length of the read
+     *
+     * @throws IOException when fewer bytes were read than requested
      */
     private static void read(InputStream in, byte[] dest, int off, int len)
             throws IOException {
