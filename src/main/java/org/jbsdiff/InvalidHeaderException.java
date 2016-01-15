@@ -46,6 +46,9 @@ public class InvalidHeaderException extends Exception {
     /**
      * Creates an InvalidHeaderException with details about the invalid field
      * that was set, and its value.
+     *
+     * @param fieldName invalid field name
+     * @param value the value of the invalid field
      */
     public InvalidHeaderException(String fieldName, int value) {
         super("Invalid header field; " + fieldName + " = " + value);
