@@ -27,8 +27,9 @@ To build a local fat jar, run:
 mvn clean package
 ```
 
-Maven
------
+Dependency Information
+----------------------
+Available on Maven Central:
 ```
 <dependency>
   <groupId>io.sigpipe</groupId>
