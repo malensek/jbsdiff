@@ -4,7 +4,7 @@ A Java implementation of bsdiff (http://www.daemonology.net/bsdiff/)
 
 
 Usage
-=====
+-----
 jbsdiff can be used from its command line interface:
 
 java -jar jbsdiff.jar command oldfile newfile patchfile
@@ -20,9 +20,21 @@ bzip2 (the default), gz, pack200, and xz.
 ...but jbsdiff is mostly intended to be used as a library.  See the _ui_ package
 for usage examples.
 
-To compile the jar do a
+Compiling
+---------
+To build a local fat jar, run:
 ```
-mvn clean compile assembly:single
+mvn clean package
+```
+
+Maven
+-----
+```
+<dependency>
+  <groupId>io.sigpipe</groupId>
+  <artifactId>jbsdiff</artifactId>
+  <version>1.0</version>
+</dependency>
 ```
 
 Also available at
