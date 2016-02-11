@@ -23,13 +23,39 @@ any theory of liability, whether in contract, strict liability, or tort
 software, even if advised of the possibility of such damage.
 */
 
+package io.sigpipe.jbsdiff;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
- * This library is a native Java implementation of bsdiff
- * (http://www.daemonology.net/bsdiff/).  The library provides diff and patch
- * functionality that is compatible with the reference implementation.
+ * A passthrough OutputStream implementation that counts (and can report) the
+ * number of bytes that have been written to the stream.
  *
- * Additional compression algorithms are also supported through the Apache
- * Commons Compress library.
+ * @author malensek
  */
-package org.jbsdiff;
+public class CountingOutputStream extends OutputStream {
+
+    private OutputStream out;
+    private int counter;
+
+    public CountingOutputStream(OutputStream out) {
+        this.out = out;
+    }
+
+    @Override
+    public void write(int b) throws IOException {
+        counter++;
+        out.write(b);
+    }
+
+    /**
+     * Retrieves the number of bytes that have been written to this stream so
+     * far.
+     *
+     * @return byte count
+     */
+    public int getCount() {
+        return counter;
+    }
+}

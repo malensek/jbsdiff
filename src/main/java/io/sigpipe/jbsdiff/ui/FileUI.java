@@ -23,13 +23,22 @@ any theory of liability, whether in contract, strict liability, or tort
 software, even if advised of the possibility of such damage.
 */
 
-package org.jbsdiff.ui;
+package io.sigpipe.jbsdiff.ui;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
-import org.jbsdiff.*;
 
-import java.io.*;
+import io.sigpipe.jbsdiff.DefaultDiffSettings;
+import io.sigpipe.jbsdiff.Diff;
+import io.sigpipe.jbsdiff.DiffSettings;
+import io.sigpipe.jbsdiff.InvalidHeaderException;
+import io.sigpipe.jbsdiff.Patch;
 
 /**
  * Provides an interface for working with bsdiff files on disk.
@@ -39,14 +48,14 @@ import java.io.*;
 public class FileUI {
 
     public static void diff(File oldFile, File newFile, File patchFile)
-            throws CompressorException, FileNotFoundException, InvalidHeaderException,
+    throws CompressorException, FileNotFoundException, InvalidHeaderException,
             IOException {
         diff(oldFile, newFile, patchFile, CompressorStreamFactory.BZIP2);
     }
 
     public static void diff(File oldFile, File newFile, File patchFile,
                             String compression)
-            throws CompressorException, FileNotFoundException, InvalidHeaderException,
+    throws CompressorException, FileNotFoundException, InvalidHeaderException,
             IOException {
         FileInputStream oldIn = new FileInputStream(oldFile);
         byte[] oldBytes = new byte[(int) oldFile.length()];
@@ -65,7 +74,7 @@ public class FileUI {
     }
 
     public static void patch(File oldFile, File newFile, File patchFile)
-            throws CompressorException, FileNotFoundException, InvalidHeaderException,
+    throws CompressorException, FileNotFoundException, InvalidHeaderException,
             IOException {
         FileInputStream oldIn = new FileInputStream(oldFile);
         byte[] oldBytes = new byte[(int) oldFile.length()];

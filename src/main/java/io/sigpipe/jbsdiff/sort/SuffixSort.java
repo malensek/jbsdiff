@@ -23,7 +23,7 @@ any theory of liability, whether in contract, strict liability, or tort
 software, even if advised of the possibility of such damage.
 */
 
-package org.jbsdiff.sort;
+package io.sigpipe.jbsdiff.sort;
 
 /**
  * Implements the suffix sorting and binary search algorithms found in bsdiff.

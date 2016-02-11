@@ -23,37 +23,28 @@ any theory of liability, whether in contract, strict liability, or tort
 software, even if advised of the possibility of such damage.
 */
 
-package org.jbsdiff.sort;
+package io.sigpipe.jbsdiff;
 
 /**
- * Represents a binary search result for a string of bytes, containing the
- * longest match found and the position in the sorted suffix array.
+ * Defines directives that control how the Diff process is carried out.
  *
  * @author malensek
  */
-public class SearchResult {
+public interface DiffSettings {
 
-    /** Number of matched bytes */
-    private int length;
+    /**
+     * Provides the name of the compression algorithm to use during diffing.
+     *
+     * @return String containing a compression algorithm name to be used by the
+     * Commons Compress CompressorStreamFactory.
+     */
+    public String getCompression();
 
-    /** Position of the result in the suffix array */
-    private int position;
-
-    public SearchResult(int length, int position) {
-        this.length = length;
-        this.position = position;
-    }
-
-    @Override
-    public String toString() {
-        return new String("length = " + length + ", position = " + position);
-    }
-
-    public int getLength() {
-        return length;
-    }
-
-    public int getPosition() {
-        return position;
-    }
+    /**
+     * Defines the suffix sorting algorithm to be used during Diff creation.
+     *
+     * @param input input array
+     * @return Sorted array of indices
+     */
+    public int[] sort(byte[] input);
 }

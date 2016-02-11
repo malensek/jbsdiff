@@ -23,16 +23,17 @@ any theory of liability, whether in contract, strict liability, or tort
 software, even if advised of the possibility of such damage.
 */
 
-package org.jbsdiff;
+package io.sigpipe.jbsdiff;
 
-import org.apache.commons.compress.compressors.CompressorException;
-import org.apache.commons.compress.compressors.CompressorStreamFactory;
-import org.jbsdiff.sort.SearchResult;
-import org.jbsdiff.sort.SuffixSort;
+import io.sigpipe.jbsdiff.sort.SearchResult;
+import io.sigpipe.jbsdiff.sort.SuffixSort;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.apache.commons.compress.compressors.CompressorException;
+import org.apache.commons.compress.compressors.CompressorStreamFactory;
 
 /**
  * This class provides functionality for generating bsdiff patches from two

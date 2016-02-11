@@ -23,10 +23,11 @@ any theory of liability, whether in contract, strict liability, or tort
 software, even if advised of the possibility of such damage.
 */
 
-package org.jbsdiff;
+package io.sigpipe.jbsdiff;
+
+import io.sigpipe.jbsdiff.sort.SuffixSort;
 
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
-import org.jbsdiff.sort.SuffixSort;
 
 /**
  * Provides a default set of DiffSettings that produces patches that are

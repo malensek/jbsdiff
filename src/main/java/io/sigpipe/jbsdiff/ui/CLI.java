@@ -23,12 +23,12 @@ any theory of liability, whether in contract, strict liability, or tort
 software, even if advised of the possibility of such damage.
 */
 
-package org.jbsdiff.ui;
+package io.sigpipe.jbsdiff.ui;
 
 import java.io.File;
 
 /**
- * Provides a simple command line interface for the org.jbsdiff tools.
+ * Provides a simple command line interface for the io.sigpipe.jbsdiff tools.
  *
  * @author malensek
  */

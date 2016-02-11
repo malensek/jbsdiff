@@ -23,35 +23,37 @@ any theory of liability, whether in contract, strict liability, or tort
 software, even if advised of the possibility of such damage.
 */
 
-package org.jbsdiff;
+package io.sigpipe.jbsdiff.sort;
 
 /**
- * An exception that indicates a malformed bsdiff header.
+ * Represents a binary search result for a string of bytes, containing the
+ * longest match found and the position in the sorted suffix array.
  *
  * @author malensek
  */
+public class SearchResult {
 
-public class InvalidHeaderException extends Exception {
+    /** Number of matched bytes */
+    private int length;
 
-    private static final long serialVersionUID = -3712364093810940826L;
+    /** Position of the result in the suffix array */
+    private int position;
 
-    public InvalidHeaderException() {
-        super();
+    public SearchResult(int length, int position) {
+        this.length = length;
+        this.position = position;
     }
 
-    public InvalidHeaderException(String detail) {
-        super(detail);
+    @Override
+    public String toString() {
+        return new String("length = " + length + ", position = " + position);
     }
 
-    /**
-     * Creates an InvalidHeaderException with details about the invalid field
-     * that was set, and its value.
-     *
-     * @param fieldName invalid field name
-     * @param value the value of the invalid field
-     */
-    public InvalidHeaderException(String fieldName, int value) {
-        super("Invalid header field; " + fieldName + " = " + value);
+    public int getLength() {
+        return length;
+    }
+
+    public int getPosition() {
+        return position;
     }
 }
-

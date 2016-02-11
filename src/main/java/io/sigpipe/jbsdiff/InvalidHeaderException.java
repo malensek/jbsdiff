@@ -23,28 +23,35 @@ any theory of liability, whether in contract, strict liability, or tort
 software, even if advised of the possibility of such damage.
 */
 
-package org.jbsdiff;
+package io.sigpipe.jbsdiff;
 
 /**
- * Defines directives that control how the Diff process is carried out.
+ * An exception that indicates a malformed bsdiff header.
  *
  * @author malensek
  */
-public interface DiffSettings {
+
+public class InvalidHeaderException extends Exception {
+
+    private static final long serialVersionUID = -3712364093810940826L;
+
+    public InvalidHeaderException() {
+        super();
+    }
+
+    public InvalidHeaderException(String detail) {
+        super(detail);
+    }
 
     /**
-     * Provides the name of the compression algorithm to use during diffing.
+     * Creates an InvalidHeaderException with details about the invalid field
+     * that was set, and its value.
      *
-     * @return String containing a compression algorithm name to be used by the
-     * Commons Compress CompressorStreamFactory.
+     * @param fieldName invalid field name
+     * @param value the value of the invalid field
      */
-    public String getCompression();
-
-    /**
-     * Defines the suffix sorting algorithm to be used during Diff creation.
-     *
-     * @param input input array
-     * @return Sorted array of indices
-     */
-    public int[] sort(byte[] input);
+    public InvalidHeaderException(String fieldName, int value) {
+        super("Invalid header field; " + fieldName + " = " + value);
+    }
 }
+

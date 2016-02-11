@@ -2,4 +2,4 @@
 /**
  * Provides UI functionality for the org.jbsdiff library.
  */
-package org.jbsdiff.ui;
+package io.sigpipe.jbsdiff.ui;
