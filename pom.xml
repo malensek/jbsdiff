@@ -46,7 +46,7 @@
 
     <properties>
         <jdk.version>1.6</jdk.version>
-        <app.main.class>org.jbsdiff.ui.CLI</app.main.class>
+        <app.main.class>io.sigpipe.jbsdiff.ui.CLI</app.main.class>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
