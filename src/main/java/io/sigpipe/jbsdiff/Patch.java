@@ -28,7 +28,12 @@ package io.sigpipe.jbsdiff;
 import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -108,6 +113,79 @@ public class Patch {
             }
 
             out.write(output);
+
+        } finally {
+            controlIn.close();
+            dataIn.close();
+            extraIn.close();
+        }
+    }
+
+    public static void patch(File oldFile, File newFile, File patchFile)
+            throws CompressorException, InvalidHeaderException, IOException {
+        /* Read bsdiff header */
+        InputStream headerIn = new FileInputStream(patchFile);
+        Header header = new Header(headerIn);
+        headerIn.close();
+
+        /* Set up InputStreams for reading different regions of the patch */
+        InputStream controlIn, dataIn, extraIn;
+        controlIn = new BufferedInputStream(new FileInputStream(patchFile));
+        dataIn = new BufferedInputStream(new FileInputStream(patchFile));
+        extraIn = new BufferedInputStream(new FileInputStream(patchFile));
+
+        try {
+            /* Seek to the correct offsets in each stream */
+            controlIn.skip(Header.HEADER_SIZE);
+            dataIn.skip(Header.HEADER_SIZE + header.getControlLength());
+            extraIn.skip(Header.HEADER_SIZE + header.getControlLength() +
+                    header.getDiffLength());
+
+            /* Set up compressed streams */
+            CompressorStreamFactory compressor = new CompressorStreamFactory();
+            controlIn = compressor.createCompressorInputStream(controlIn);
+            dataIn = compressor.createCompressorInputStream(dataIn);
+            extraIn = compressor.createCompressorInputStream(extraIn);
+
+            FileInputStream oldStream = new FileInputStream(oldFile);
+            byte[] old = new byte[(int) oldFile.length()];
+            oldStream.read(old);
+            oldStream.close();
+
+            OutputStream out = new BufferedOutputStream(new FileOutputStream(newFile));
+
+            /* Start patching */
+            int newPointer = 0, oldPointer = 0;
+            int outputLength = header.getOutputLength();
+            while (newPointer < outputLength) {
+
+                ControlBlock control = new ControlBlock(controlIn);
+
+                /* Read diff string */
+                int diffLength = control.getDiffLength();
+                int extraLength = control.getExtraLength();
+                byte[] output = new byte[diffLength + extraLength];
+                read(dataIn, output, 0, diffLength);
+
+                /* Add old data to diff string */
+                for (int i = 0; i < diffLength; ++i) {
+                    if ((oldPointer + i >= 0) && oldPointer + i < old.length) {
+                        output[i] += old[oldPointer + i];
+                    }
+                }
+
+                newPointer += diffLength;
+                oldPointer += diffLength;
+
+                /* Copy the extra string to the output */
+                read(extraIn, output, diffLength, extraLength);
+                out.write(output);
+
+                newPointer += extraLength;
+                oldPointer += control.getSeekLength();
+            }
+
+            out.close();
 
         } finally {
             controlIn.close();

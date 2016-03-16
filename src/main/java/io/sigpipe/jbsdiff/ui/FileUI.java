@@ -76,18 +76,6 @@ public class FileUI {
     public static void patch(File oldFile, File newFile, File patchFile)
     throws CompressorException, FileNotFoundException, InvalidHeaderException,
             IOException {
-        FileInputStream oldIn = new FileInputStream(oldFile);
-        byte[] oldBytes = new byte[(int) oldFile.length()];
-        oldIn.read(oldBytes);
-        oldIn.close();
-
-        FileInputStream patchIn = new FileInputStream(patchFile);
-        byte[] patchBytes = new byte[(int) patchFile.length()];
-        patchIn.read(patchBytes);
-        patchIn.close();
-
-        FileOutputStream out = new FileOutputStream(newFile);
-        Patch.patch(oldBytes, patchBytes, out);
-        out.close();
+        Patch.patch(oldFile, newFile, patchFile);
     }
 }
