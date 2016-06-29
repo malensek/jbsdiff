@@ -49,9 +49,9 @@ public class CLI {
             File newFile = new File(args[2]);
             File patchFile = new File(args[3]);
 
-            if (command.equals("diff")) {
+            if ("diff".equals(command)) {
                 FileUI.diff(oldFile, newFile, patchFile, compression);
-            } else if (command.equals("patch")) {
+            } else if ("patch".equals(command)) {
                 FileUI.patch(oldFile, newFile, patchFile);
             } else {
                 printUsage();
