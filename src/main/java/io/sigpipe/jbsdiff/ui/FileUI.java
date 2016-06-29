@@ -50,15 +50,13 @@ public class FileUI {
 	private FileUI() {};
 
     public static void diff(File oldFile, File newFile, File patchFile)
-    throws CompressorException, FileNotFoundException, InvalidHeaderException,
-            IOException {
+    throws CompressorException, InvalidHeaderException, IOException {
         diff(oldFile, newFile, patchFile, CompressorStreamFactory.BZIP2);
     }
 
     public static void diff(File oldFile, File newFile, File patchFile,
                             String compression)
-    throws CompressorException, FileNotFoundException, InvalidHeaderException,
-            IOException {
+    throws CompressorException, InvalidHeaderException, IOException {
         FileInputStream oldIn = new FileInputStream(oldFile);
         byte[] oldBytes = new byte[(int) oldFile.length()];
         oldIn.read(oldBytes);
@@ -76,8 +74,7 @@ public class FileUI {
     }
 
     public static void patch(File oldFile, File newFile, File patchFile)
-    throws CompressorException, FileNotFoundException, InvalidHeaderException,
-            IOException {
+    throws CompressorException, InvalidHeaderException, IOException {
         Patch.patch(oldFile, newFile, patchFile);
     }
 }
