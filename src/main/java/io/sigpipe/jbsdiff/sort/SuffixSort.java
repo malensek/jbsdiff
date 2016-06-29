@@ -31,6 +31,9 @@ package io.sigpipe.jbsdiff.sort;
  * @author malensek
  */
 public class SuffixSort {
+	
+	private SuffixSort() {}
+	
     public static void qsufsort(int[] I, int[] V, byte[] data) {
         int[] buckets = new int[256];
         int i, h, len;

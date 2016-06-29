@@ -45,6 +45,8 @@ import java.io.OutputStream;
  * @author malensek
  */
 public class Patch {
+	
+	private Patch() {}
 
     /**
      * Using an old file and its accompanying patch, this method generates a new

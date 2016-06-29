@@ -44,6 +44,8 @@ import org.apache.commons.compress.compressors.CompressorStreamFactory;
  * @author malensek
  */
 public class Diff {
+	
+	private Diff() {}
 
     /**
      * Using two different versions of a file, generate a bsdiff patch that can
