@@ -46,6 +46,8 @@ import io.sigpipe.jbsdiff.Patch;
  * @author malensek
  */
 public class FileUI {
+	
+	private FileUI() {};
 
     public static void diff(File oldFile, File newFile, File patchFile)
     throws CompressorException, FileNotFoundException, InvalidHeaderException,

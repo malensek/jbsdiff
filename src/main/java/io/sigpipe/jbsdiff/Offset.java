@@ -43,6 +43,8 @@ class Offset {
      * Size of a bsdiff-encoded offset, in bytes.
      */
     public static final int OFFSET_SIZE = 8;
+    
+    private Offset() {}
 
     /**
      * Reads a bsdiff-encoded offset (based on the C off_t type) from an
