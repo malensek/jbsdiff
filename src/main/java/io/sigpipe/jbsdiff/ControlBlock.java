@@ -69,12 +69,14 @@ class ControlBlock {
         diffLength = Offset.readOffset(in);
         extraLength = Offset.readOffset(in);
         seekLength = Offset.readOffset(in);
+        //TODO: validate lengths (should be >= 0)
     }
 
     public ControlBlock(int diffLength, int extraLength, int seekLength) {
         this.diffLength = diffLength;
         this.extraLength = extraLength;
         this.seekLength = seekLength;
+        //TODO: validate lengths (should be >= 0)
     }
 
     /**
