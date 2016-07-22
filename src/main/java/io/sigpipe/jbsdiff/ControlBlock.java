@@ -57,8 +57,7 @@ class ControlBlock {
      */
     private int seekLength;
 
-    public ControlBlock() {
-    }
+    public ControlBlock() { }
 
     /**
      * Read a bsdiff control block from an input stream.
