@@ -33,8 +33,8 @@ import java.io.File;
  * @author malensek
  */
 public class CLI {
-	
-	private CLI() {}
+
+    private CLI() { }
 
     public static void main(String[] args) throws Exception {
         if (args.length < 4) {
