@@ -33,10 +33,18 @@ import java.io.File;
  * @author malensek
  */
 public class CLI {
+    private static final String COMMAND_DIFF = "diff";
+    private static final String COMMAND_PATCH = "patch";
 
     private CLI() { }
 
+    /** Diff or patch with specified files.
+     * Format is command oldFile newFile patchFile .
+     * Command is either diff or patch */
     public static void main(String[] args) throws Exception {
+        if ( args.length == 3 ) {
+            args = withCommandGuess( args );
+        }
         if (args.length < 4) {
             System.out.println("Not enough parameters!");
             printUsage();
@@ -51,9 +59,9 @@ public class CLI {
             File newFile = new File(args[2]);
             File patchFile = new File(args[3]);
 
-            if ("diff".equals(command)) {
+            if (COMMAND_DIFF.equals(command)) {
                 FileUI.diff(oldFile, newFile, patchFile, compression);
-            } else if ("patch".equals(command)) {
+            } else if (COMMAND_PATCH.equals(command)) {
                 FileUI.patch(oldFile, newFile, patchFile);
             } else {
                 printUsage();
@@ -65,6 +73,7 @@ public class CLI {
         }
     }
 
+    /** Shows the expected arguments for jbsdiff, with compression schemes. */
     public static void printUsage() {
         String usage = String.format("" +
                 "Usage: command <oldfile> <newfile> <patchfile>%n%n" +
@@ -86,4 +95,48 @@ public class CLI {
         System.out.println(usage);
         System.exit(1);
     }
+
+    /** Attempts to fill in a forgotten command based on which file doesn't exist. */
+    private static String[] withCommandGuess(String[] args) {
+        if ( args.length != 3 ) {
+            // caller provided too few to operate or enough arguments to avoid guessing
+            return args;
+        }
+        if (COMMAND_DIFF.equals(args[0]) || COMMAND_PATCH.equals(args[0])) {
+            // caller actually forgot a file, rather than the command
+            return args;
+        }
+        File oldFile = new File(args[0]);
+        File newFile = new File(args[1]);
+        File patchFile = new File(args[2]);
+        String chosenAction, command;
+        String actionTemplate = "Guessing! %s %s & %s AS %s";
+        if (oldFile.exists() && newFile.exists()
+                && ! patchFile.exists()) {
+            command = COMMAND_DIFF;
+            chosenAction = String.format(actionTemplate,
+                    command, oldFile, newFile, patchFile);
+            System.out.println(chosenAction);
+            args = insertCommand(command, args);
+        } else if (oldFile.exists() && patchFile.exists()
+                && ! newFile.exists()) {
+            command = COMMAND_PATCH;
+            chosenAction = String.format(actionTemplate,
+                    command, oldFile, patchFile, newFile);
+            System.out.println(chosenAction);
+            args = insertCommand(command, args);
+        }
+        return args;
+    }
+
+    /** Prefixes an array with the desired command */
+    private static String[] insertCommand(String command, String[] args) {
+        String[] withCommand = new String[args.length +1];
+        withCommand[0] = command;
+        for (int i = 0; i < args.length; i++) {
+            withCommand[i +1] = args[i];
+        }
+        return withCommand;
+    }
+
 }
