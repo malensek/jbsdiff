@@ -61,7 +61,6 @@
                     <target>${jdk.version}</target>
 
                     <compilerArgument>-Xlint:all</compilerArgument>
-                    <compilerArgument>-Xpkginfo:always</compilerArgument>
                     <showDeprecation>true</showDeprecation>
                     <showWarnings>true</showWarnings>
                 </configuration>
