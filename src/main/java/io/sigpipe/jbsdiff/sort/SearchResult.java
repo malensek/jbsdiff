@@ -46,7 +46,7 @@ public class SearchResult {
 
     @Override
     public String toString() {
-        return new String("length = " + length + ", position = " + position);
+        return "length = " + length + ", position = " + position;
     }
 
     public int getLength() {
