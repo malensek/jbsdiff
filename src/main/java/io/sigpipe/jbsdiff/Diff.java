@@ -225,13 +225,13 @@ public class Diff {
 
         patchOut =
                 compressor.createCompressorOutputStream(compression, byteOut);
-        patchOut.write(db);
+        patchOut.write(db, 0, dblen);
         patchOut.close();
         header.setDiffLength(byteOut.size() - header.getControlLength());
 
         patchOut =
                 compressor.createCompressorOutputStream(compression, byteOut);
-        patchOut.write(eb);
+        patchOut.write(eb, 0, eblen);
         patchOut.close();
 
         header.setOutputLength(newBytes.length);
