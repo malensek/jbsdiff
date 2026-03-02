@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/CIResearchGroup/jbsdiff.svg?branch=master)](https://travis-ci.org/CIResearchGroup/jbsdiff)
 jbsdiff
 =======
 A Java implementation of bsdiff (http://www.daemonology.net/bsdiff/)
